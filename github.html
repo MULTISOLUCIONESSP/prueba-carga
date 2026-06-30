@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cargar Artesanía - Mercado SP</title>
+    <!-- 🟢 CDN REAL Y COMPLETO DE FONTAWESOME (REPARADO PUNTO 8 DEL INFORME) -->
+    <link rel="stylesheet" href="https://cloudflare.com">
+    <style>
+        /* ==========================================================================
+           🚀 [MÓDULO 1]: CONFIGURACIÓN DE ALTA DEFINICIÓN (CHAU PIXELADO HORRIBLE)
+           ========================================================================== */
+        html, body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+            background-color: #f5f2eb !important;
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0; padding: 0; box-sizing: border-box; color: #2c2621;
+        }
+        
+        header { background-color: #ffffff; border-bottom: 1px solid #e2d8c2; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .logo-box { display: flex; align-items: center; gap: 6px; cursor: pointer; text-decoration: none; }
+        .logo-badge { background-color: #2e5a44; color: #ffffff; font-size: 11px; font-weight: 900; padding: 6px 8px; border-radius: 10px; }
+        .logo-text h1 { font-size: 13px; font-weight: 900; color: #2e5a44; margin: 0; text-transform: uppercase; }
+        
+        .btn-volver { background: none; border: 1px solid #e2d8c2; color: #8a8174; font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 9999px; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s; }
+        .btn-volver:hover { background-color: #f4f3ee; color: #2e5a44; border-color: #2e5a44; }
+
+        main { max-width: 600px; margin: 0 auto; width: 100%; padding: 16px; box-sizing: border-box; display: flex; flex-direction: column; gap: 16px; }
+        .form-card { background-color: #ffffff; border-radius: 16px; border: 1px solid #e2d8c2; padding: 24px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); box-sizing: border-box; width: 100%; }
+        .form-card h2 { font-size: 16px; font-weight: 900; color: #1e293b; margin: 0; text-transform: uppercase; letter-spacing: 0.02em; }
+        .form-card p { font-size: 12px; color: #8a8174; margin: 0 0 20px 0; font-weight: 500; }
+
+        .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; width: 100%; box-sizing: border-box; }
+        .form-group label { font-size: 11px; font-weight: 700; color: #4a4036; text-transform: uppercase; letter-spacing: 0.05em; padding-left: 2px; }
+        
+        .input-field, .select-field, .textarea-field { width: 100%; background-color: #f4f3ee; font-size: 13px; color: #2c2621; border-radius: 12px; padding: 10px 14px; border: 1px solid #e2d8c2; outline: none; transition: all 0.2s; box-sizing: border-box; -webkit-appearance: none; }
+        .input-field:focus, .select-field:focus, .textarea-field:focus { background-color: #ffffff; border-color: #2e5a44; box-shadow: 0 0 0 2px rgba(46,90,68,0.1); }
+        
+        .textarea-field { height: 80px; resize: none; font-family: inherit; }
+
+        .flex-grilla-mitad { display: grid; grid-template-cols: 1fr; gap: 12px; width: 100%; box-sizing: border-box; }
+        @media (min-width: 480px) { .flex-grilla-mitad { grid-template-cols: 1fr 1fr; } }
+        
+        .fotos-carrusel-contenedor { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px; margin-top: 4px; width: 100%; box-sizing: border-box; }
+        .fotos-carrusel-contenedor::-webkit-scrollbar { display: none; }
+        
+        /* 🟢 PREVIEW ADAPTATIVO: Preparado para inyectar imágenes de fondo con cobertura completa */
+        .ranura-foto-vacia { width: 76px; height: 76px; background-color: #f4f3ee; border: 2px dashed #e2d8c2; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #8a8174; cursor: pointer; flex-shrink: 0; transition: all 0.2s; box-sizing: border-box; position: relative; text-align: center; padding: 4px; pointer-events: auto; background-size: cover; background-position: center; background-repeat: no-repeat; }
+        .ranura-foto-vacia:hover { border-color: #2e5a44; color: #2e5a44; background-color: #ffffff; }
+        .ranura-foto-vacia i { font-size: 16px; margin-bottom: 2px; }
+        .ranura-foto-vacia span { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; display: block; }
+        
+        /* 🟢 CAPA OSCURA INTERNA: Hace que las letras sigan siendo legibles cuando la foto se pone de fondo */
+        .ranura-foto-vacia.con-preview::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); border-radius: 10px; z-index: 1; }
+        .ranura-foto-vacia.con-preview i, .ranura-foto-vacia.con-preview span { position: relative; z-index: 2; color: #ffffff !important; }
+
+        .input-archivo-oculto { display: none; }
+
+        /* 👑 ÓVALOS EN PARALELO SOLICITADOS POR ALBERTO */
+        .contenedor-botones-cabecera-form { display: flex; gap: 8px; align-items: center; white-space: nowrap; }
+        .btn-accion-formulario { border: none; font-size: 11px; font-weight: 800; padding: 8px 16px; border-radius: 9999px; cursor: pointer; text-transform: uppercase; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-family: system-ui, sans-serif; }
+        .btn-form-guardar { background-color: #2e5a44; color: #ffffff; }
+        .btn-form-guardar:hover { background-color: #224332; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-box">
+            <span class="logo-badge">MS</span>
+            <div class="logo-text"><h1>PUBLICAR ARTESANÍA</h1></div>
+        </div>
+        <button class="btn-volver" onclick="volverAlPanel()">
+            <i class="fa-solid fa-arrow-left"></i> Panel
+        </button>
+    </header>
+
+    <main>
+        <div class="form-card">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid #e2d8c2; padding-bottom: 14px; margin-bottom: 20px; width: 100%; box-sizing: border-box;">
+                <div style="display: flex; flex-direction: column;">
+                    <h2 id="txt-titulo-accion-bunker">Publicar Artesanía</h2>
+                    <p style="margin: 4px 0 0 0;">Ingresá los parámetros de tu obra para indexarla en la vidriera principal.</p>
+                </div>
+                <div class="contenedor-botones-cabecera-form">
+                    <button class="btn-accion-formulario btn-form-guardar" onclick="publicarArtesania(event)">
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar Cambios
+                    </button>
+                    <button id="btn-eliminar-dinamico-bunker" class="btn-accion-formulario" style="background-color: #dc2626; color: #ffffff; display: inline-flex;" onclick="dispararEliminacionHachazo()">
+                        <i class="fa-solid fa-trash-can"></i> Eliminar Producto
+                    </button>
+                </div>
+            </div>
+            <form id="form-carga" onsubmit="event.preventDefault();">
+                <input type="hidden" id="prod-id-oculto" value="">
+                <input type="hidden" id="prod-fotos-viejas-ocultas" value="">
+
+                <!-- Ranura 1: Nombre de la Artesanía -->
+                <div class="form-group">
+                    <label>Nombre del Producto / Obra</label>
+                    <input type="text" id="prod-nombre" placeholder="Ej: Jabón Orgánico de Coco o Llavero Botánico" class="input-field" required>
+                </div>
+
+                <!-- Ranura 2: Selector de Categorías Estricto -->
+                <div class="form-group" style="position: relative;">
+                    <label>Categoría Obligatoria</label>
+                    <div style="position: relative; width: 100%;">
+                        <select id="prod-categoria" class="select-field" required>
+                            <option value="" disabled selected>Seleccioná el rubro de tu productoo...</option>
+                            <option value="Jabonería">Jabonería de Diseño</option>
+                            <option value="Cosmética">Cosmética de Autor</option>
+                            <option value="Perfumería">Óleos y Perfumerías</option>
+                            <option value="Velería">Velería Templaria</option>
+                            <option value="Resina Epóxica">Resina Epóxica de Autor</option>
+                            <option value="Sahumerios">Sahumerios Artesanales</option>
+                            <option value="Madera">Madera</option>
+                            <option value="Vasos">Vasos</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down" style="position: absolute; right: 14px; top: 14px; font-size: 11px; color: #8a8174; pointer-events: none;"></i>
+                    </div>
+                </div>
+
+                <!-- Ranura 3: Precio de Venta Directo -->
+                <div class="form-group">
+                    <label>Valor Comercial (ARS)</label>
+                    <div style="position: relative; display: flex; align-items: center; width: 100%;">
+                        <span style="position: absolute; left: 14px; font-size: 13px; font-weight: 700; color: #4a4036;">$</span>
+                        <input type="number" id="prod-precio" placeholder="0.00" class="input-field" style="padding-left: 28px;" required>
+                    </div>
+                </div>
+
+                <!-- RANURA 4: DESCRIPCIÓN DE AUTOR ACOTADA -->
+                <div class="form-group">
+                    <label>Descripción de Autor (Acotada)</label>
+                    <textarea id="prod-descripcion-corta" placeholder="Inscripción corta de la obra (aparecerá abajo de tu foto en la portada principal)..." class="textarea-field" style="height: 54px;" required></textarea>
+                </div>
+
+                <!-- Ranura 5: Detalles Ampliados -->
+                <div class="form-group">
+                    <label>Detalle Extendido del Producto</label>
+                    <textarea id="prod-descripcion-larga" placeholder="Contale detalladamente al cliente el proceso de elaboración..." class="textarea-field" required></textarea>
+                </div>
+
+                <!-- Grilla en Paralelo: Unidades de Stock y Disponibilidad de Entrega -->
+                <div class="flex-grilla-mitad">
+                    <div class="form-group">
+                        <label>Unidades Disponibles (Stock)</label>
+                        <input type="number" id="prod-stock" min="0" placeholder="Ej: 10" class="input-field" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Disponibilidad de Entrega</label>
+                        <div style="position: relative; width: 100%;">
+                            <select id="prod-entrega-tipo" class="select-field" onchange="evaluarTiempoProduccion()" required>
+                                <option value="permanente" selected>Stock Permanente (Entrega Inmediata)</option>
+                                <option value="pedido">Hecho a Pedido (Tiempo de Elaboración)</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down" style="position: absolute; right: 14px; top: 14px; font-size: 11px; color: #8a8174; pointer-events: none;"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ranura Dinámica: Días de Demora si es a pedido -->
+                <div class="form-group" id="contenedor-tiempo-pedido" style="display: none;">
+                    <label>Días de Fabricación / Demora de Entrega</label>
+                    <div style="position: relative; display: flex; align-items: center; width: 100%;">
+                        <input type="number" id="prod-tiempo-dias" min="1" placeholder="Ej: 5" class="input-field" style="padding-right: 48px;">
+                        <span style="position: absolute; right: 14px; font-size: 11px; font-weight: 700; color: #8a8174; text-transform: uppercase;">Días</span>
+                    </div>
+                </div>
+
+                <!-- 📸 CARRUSEL DE CARGA CON COMPONENTES DE ENTRADA NATIVOS TOTALMENTE REPARADOS -->
+                <div class="form-group">
+                    <label>Fotos del Producto (Hasta 5 Imágenes de Catálogo)</label>
+                    <div class="fotos-carrusel-contenedor">
+                        <label class="ranura-foto-vacia" id="vista-foto-1"><i class="fa-solid fa-camera"></i><span>Principal</span><input type="file" accept="image/*" class="input-archivo-oculto" onchange="prepararArchivoLocalDrive(this, 1)"></label>
+                        <label class="ranura-foto-vacia" id="vista-foto-2"><i class="fa-solid fa-plus"></i><span>Foto 2</span><input type="file" accept="image/*" class="input-archivo-oculto" onchange="prepararArchivoLocalDrive(this, 2)"></label>
+                        <label class="ranura-foto-vacia" id="vista-foto-3"><i class="fa-solid fa-plus"></i><span>Foto 3</span><input type="file" accept="image/*" class="input-archivo-oculto" onchange="prepararArchivoLocalDrive(this, 3)"></label>
+                        <label class="ranura-foto-vacia" id="vista-foto-4"><i class="fa-solid fa-plus"></i><span>Foto 4</span><input type="file" accept="image/*" class="input-archivo-oculto" onchange="prepararArchivoLocalDrive(this, 4)"></label>
+                        <label class="ranura-foto-vacia" id="vista-foto-5"><i class="fa-solid fa-plus"></i><span>Foto 5</span><input type="file" accept="image/*" class="input-archivo-oculto" onchange="prepararArchivoLocalDrive(this, 5)"></label>
+                    </div>
+                </div>
+
+                <button type="submit" onclick="publicarArtesania(event)" style="background-color: #2e5a44; color: #ffffff; width: 100%; font-size: 11px; font-weight: 800; padding: 12px; border-radius: 9999px; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: background-color 0.2s; box-sizing: border-box; font-family: system-ui, sans-serif; margin-top: 10px;">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Indexar Producto en la Vidriera
+                </button>
+
+                <div style="margin-top: 16px; width: 100%; box-sizing: border-box;">
+                    <a href="https://wa.me" target="_blank" style="background-color: #10b981; color: #ffffff; width: 100%; font-size: 11px; font-weight: 800; padding: 12px; border-radius: 9999px; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: background-color 0.2s; box-sizing: border-box; font-family: system-ui, sans-serif; text-decoration: none;">
+                        <i class="fa-brands fa-whatsapp" style="font-size: 13px;"></i> Contacto Directo con el Desarrollador
+                    </a>
+                </div>
+            </form>
+        </div>
+    </main>
+    <footer style="background-color: #1e3c2d; color: #fcfbf7; padding: 20px 16px; border-top: 1px solid #e2d8c2; text-align: center; font-size: 11px; margin-top: 32px;">
+        <div style="display: flex; justify-content: center; gap: 14px; margin-bottom: 10px; font-size: 15px; color: #e2d8c2;">
+            <i class="fa-brands fa-facebook"></i>
+            <i class="fa-brands fa-instagram"></i>
+            <i class="fa-brands fa-whatsapp"></i>
+        </div>
+        <p style="font-weight: 700; letter-spacing: 0.05em; margin: 0;">© 2026 Mercado de Vendedores Independientes</p>
+    </footer>
+
+  <script>
+        // Array donde guardaremos las URLs finales de ImgBB
+        let linksImagenesFinales = [null, null, null, null, null];
+        
+        // ⚠️ REEMPLAZÁ ESTA URL POR TU URL DE GOOGLE WEB APP (la que termina en /exec)
+        const URL_BACKEND_GOOGLE = "https://google.com";
+
+        // Motor de subida directa a ImgBB desde GitHub
+        function prepararArchivoLocalDrive(input, indice) {
+            if (input.files && input.files.length > 0) {
+                const archivoFoto = input.files.item(0); 
+                const ranuraVisual = document.getElementById('vista-foto-' + indice);
+                
+                ranuraVisual.style.backgroundColor = '#6c757d';
+                ranuraVisual.style.color = '#ffffff';
+                ranuraVisual.querySelector('span').innerText = 'SUBIENDO A IMGBB...';
+
+                let formData = new FormData();
+                formData.append("image", archivoFoto);
+
+                // Petición directa de GitHub a ImgBB
+                fetch("https://imgbb.com", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(resultado => {
+                    if (resultado && resultado.success) {
+                        linksImagenesFinales[indice - 1] = resultado.data.url;
+                        
+                        ranuraVisual.style.backgroundImage = "url('" + resultado.data.url + "')";
+                        ranuraVisual.classList.add('con-preview');
+                        ranuraVisual.style.borderColor = '#2e5a44';
+                        ranuraVisual.querySelector('span').innerText = 'OK LISTA';
+                    } else {
+                        ranuraVisual.style.backgroundColor = '#dc3545';
+                        ranuraVisual.querySelector('span').innerText = 'ERR_API';
+                    }
+                })
+                .catch(err => {
+                    ranuraVisual.style.backgroundColor = '#dc3545';
+                    ranuraVisual.querySelector('span').innerText = 'ERR_RED';
+                });
+            }
+        }
+
+        function publicarArtesania(e) {
+            if (e) e.preventDefault();
+            const form = document.getElementById('form-carga');
+            if (!form.checkValidity()) { form.reportValidity(); return; }
+
+            const btnPublicar = document.querySelector('button[type="submit"]') || document.getElementById('btn-publicar-bunker');
+            if(btnPublicar) { btnPublicar.disabled = true; btnPublicar.innerText = "⏳ GUARDANDO..."; }
+
+            let urlsFiltradas = [];
+            for (let i = 0; i < linksImagenesFinales.length; i++) {
+                if (linksImagenesFinales[i] !== null) { urlsFiltradas.push(linksImagenesFinales[i]); }
+            }
+
+            const stringFotosFinal = (urlsFiltradas.length > 0) ? urlsFiltradas.join(",") : (document.getElementById('prod-fotos-viejas-ocultas').value || "Sin_Foto");
+
+            const datosProducto = {
+                id: document.getElementById('prod-id-oculto').value,
+                nombre: document.getElementById('prod-nombre').value,
+                categoria: document.getElementById('prod-categoria').value,
+                precio: document.getElementById('prod-precio').value,
+                descripcionCorta: document.getElementById('prod-descripcion-corta').value,
+                descripcion: document.getElementById('prod-descripcion-larga').value,
+                stock: document.getElementById('prod-stock').value,
+                entregaTipo: document.getElementById('prod-entrega-tipo').value,
+                tiempoDias: document.getElementById('prod-tiempo-dias').value || 0,
+                urlFotosViejas: stringFotosFinal,
+                fotosParaProcesar: [] 
+            };
+
+            // Mandamos los datos mediante fetch a Google Script de forma externa
+            fetch(URL_BACKEND_GOOGLE, {
+                method: "POST",
+                mode: "no-cors", 
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(datosProducto)
+            })
+            .then(() => {
+                alert("✅ ¡Petición enviada! Revisá tu Google Sheets.");
+                if(btnPublicar) { btnPublicar.disabled = false; btnPublicar.innerText = "PUBLICAR"; }
+            })
+            .catch(err => {
+                alert("❌ Error al conectar con el servidor: " + err.message);
+                if(btnPublicar) { btnPublicar.disabled = false; btnPublicar.innerText = "PUBLICAR"; }
+            });
+        }
+</script>
+
+
+
+</body>
+</html>
