@@ -212,10 +212,50 @@
         const URL_BACKEND_GOOGLE = "https://google.com";
 
         // Motor de subida directa a ImgBB desde GitHub
-        function prepararArchivoLocalDrive(input, indice) {
-            if (input.files && input.files.length > 0) {
-                const archivoFoto = input.files.item(0); 
-                const ranuraVisual = document.getElementById('vista-foto-' + indice);
+       // 🚀 REEMPLAZÁ ESTA FUNCIÓN EN TU ARCHIVO DE GITHUB
+function prepararArchivoLocalDrive(input, indice) {
+    if (input.files && input.files.length > 0) {
+        const archivoFoto = input.files.item(0); 
+        const ranuraVisual = document.getElementById('vista-foto-' + indice);
+        
+        ranuraVisual.style.backgroundColor = '#6c757d';
+        ranuraVisual.style.color = '#ffffff';
+        ranuraVisual.querySelector('span').innerText = 'SUBIENDO A IMGBB...';
+
+        let formData = new FormData();
+        formData.append("image", archivoFoto);
+
+        // ✅ CORREGIDO: Dirección exacta de la API de ImgBB para evitar el bloqueo de red
+        fetch("https://imgbb.com", {
+            method: "POST",
+            body: formData
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("Error en la respuesta del servidor");
+            return res.json();
+        })
+        .then(resultado => {
+            if (resultado && resultado.success) {
+                // Guardamos el link directo en el array de GitHub
+                linksImagenesFinales[indice - 1] = resultado.data.url;
+                
+                ranuraVisual.style.backgroundImage = "url('" + resultado.data.url + "')";
+                ranuraVisual.classList.add('con-preview');
+                ranuraVisual.style.borderColor = '#2e5a44';
+                ranuraVisual.querySelector('span').innerText = 'OK LISTA';
+            } else {
+                ranuraVisual.style.backgroundColor = '#dc3545';
+                ranuraVisual.querySelector('span').innerText = 'ERR_API';
+            }
+        })
+        .catch(err => {
+            ranuraVisual.style.backgroundColor = '#dc3545';
+            ranuraVisual.querySelector('span').innerText = 'ERR_RED';
+            console.error("Fallo de subida:", err);
+        });
+    }
+}
+
                 
                 ranuraVisual.style.backgroundColor = '#6c757d';
                 ranuraVisual.style.color = '#ffffff';
